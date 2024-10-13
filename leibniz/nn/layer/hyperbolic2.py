@@ -22,15 +22,15 @@ class HyperBasic(nn.Module):
 
     def forward(self, x):
         input = self.input(x)
-        velo = input[:, :self.dim]
-        theta = input[:, self.dim:]
+        velo = input[:, : self.dim]
+        theta = input[:, self.dim :]
 
         step = self.step * velo
 
         y1 = (x + th.tanh(theta)) * th.exp(step * th.sin(theta)) - th.tanh(theta)
-        y2 = (x + th.tanh(theta)) * th.exp(- step * th.cos(theta)) - th.tanh(theta)
+        y2 = (x + th.tanh(theta)) * th.exp(-step * th.cos(theta)) - th.tanh(theta)
         y3 = (x - th.tanh(theta)) * th.exp(step * th.sin(theta)) + th.tanh(theta)
-        y4 = (x - th.tanh(theta)) * th.exp(- step * th.cos(theta)) + th.tanh(theta)
+        y4 = (x - th.tanh(theta)) * th.exp(-step * th.cos(theta)) + th.tanh(theta)
         ys = th.cat((y1, y2, y3, y4), dim=1)
 
         return x + self.output(ys)
@@ -52,15 +52,15 @@ class HyperBottleneck(nn.Module):
 
     def forward(self, x):
         input = self.input(x)
-        velo = input[:, :self.dim]
-        theta = input[:, self.dim:]
+        velo = input[:, : self.dim]
+        theta = input[:, self.dim :]
 
         step = self.step * velo
 
         y1 = (x + th.tanh(theta)) * th.exp(step * th.sin(theta)) - th.tanh(theta)
-        y2 = (x + th.tanh(theta)) * th.exp(- step * th.cos(theta)) - th.tanh(theta)
+        y2 = (x + th.tanh(theta)) * th.exp(-step * th.cos(theta)) - th.tanh(theta)
         y3 = (x - th.tanh(theta)) * th.exp(step * th.sin(theta)) + th.tanh(theta)
-        y4 = (x - th.tanh(theta)) * th.exp(- step * th.cos(theta)) + th.tanh(theta)
+        y4 = (x - th.tanh(theta)) * th.exp(-step * th.cos(theta)) + th.tanh(theta)
         ys = th.cat((y1, y2, y3, y4), dim=1)
 
         return x + self.output(ys)

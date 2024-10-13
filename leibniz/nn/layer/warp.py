@@ -4,7 +4,7 @@ import torch.nn.functional as F
 
 
 class BilinearWarpingScheme(nn.Module):
-    def __init__(self, padding_mode='zeros'):
+    def __init__(self, padding_mode="zeros"):
         super(BilinearWarpingScheme, self).__init__()
         self.padding_mode = padding_mode
         self.grids = {}
@@ -15,7 +15,7 @@ class BilinearWarpingScheme(nn.Module):
         h = ws.size()[2]
         w = ws.size()[3]
 
-        key = '%d-%s' % (b, im.get_device())
+        key = "%d-%s" % (b, im.get_device())
         if key not in self.grids:
             if im.get_device() < 0:
                 g0 = th.linspace(-1, 1, h, requires_grad=False)
@@ -29,4 +29,9 @@ class BilinearWarpingScheme(nn.Module):
         grid = self.grids[key]
         shift = grid.reshape(-1, 2, h, w) - ws.reshape(-1, 2, h, w)
         shift = shift.permute(0, 2, 3, 1)
-        return F.grid_sample(im.reshape(-1, 2, h, w), shift, padding_mode=self.padding_mode, mode='bilinear').reshape(-1, c, h, w)
+        return F.grid_sample(
+            im.reshape(-1, 2, h, w),
+            shift,
+            padding_mode=self.padding_mode,
+            mode="bilinear",
+        ).reshape(-1, c, h, w)

@@ -6,23 +6,33 @@ from torchpwl.pwl import BasePointPWL, MonoPointPWL
 
 class InversedMonoPointPWL(BasePointPWL):
     def __init__(self, peer):
-        super(InversedMonoPointPWL, self).__init__(peer.num_channels, peer.num_breakpoints, num_x_points=peer.num_breakpoints+1)
+        super(InversedMonoPointPWL, self).__init__(
+            peer.num_channels,
+            peer.num_breakpoints,
+            num_x_points=peer.num_breakpoints + 1,
+        )
         self.peer = peer
 
     def _reset_params(self):
         self.peer._reset_params()
 
     def get_y_positions(self):
-        return th.sort(self.peer.get_x_positions(), dim=1, descending=self.peer.mono<0)[0]
+        return th.sort(
+            self.peer.get_x_positions(), dim=1, descending=self.peer.mono < 0
+        )[0]
 
     def get_x_positions(self):
-        return th.sort(self.peer.get_y_positions(), dim=1, descending=self.peer.mono<0)[0]
+        return th.sort(
+            self.peer.get_y_positions(), dim=1, descending=self.peer.mono < 0
+        )[0]
 
 
 class PWLNormalizorApp(nn.Module):
     def __init__(self, num_channels, num_breakpoints, monotonicity=1):
         super(PWLNormalizorApp, self).__init__()
-        self.pwl = MonoPointPWL(num_channels, num_breakpoints, monotonicity=monotonicity)
+        self.pwl = MonoPointPWL(
+            num_channels, num_breakpoints, monotonicity=monotonicity
+        )
         self.pwl.mono = monotonicity
 
     def forward(self, x):
@@ -51,9 +61,13 @@ class PWLNormalizorInv(nn.Module):
 
 
 class PWLNormalizor(nn.Module):
-    def __init__(self, num_channels, num_breakpoints, monotonicity=1, std=1.0, mean=0.0):
+    def __init__(
+        self, num_channels, num_breakpoints, monotonicity=1, std=1.0, mean=0.0
+    ):
         super(PWLNormalizor, self).__init__()
-        self.app = PWLNormalizorApp(num_channels, num_breakpoints, monotonicity=monotonicity)
+        self.app = PWLNormalizorApp(
+            num_channels, num_breakpoints, monotonicity=monotonicity
+        )
         self.inv = PWLNormalizorInv(self.app)
         self.mean = mean
         self.std = std
@@ -66,30 +80,63 @@ class PWLNormalizor(nn.Module):
 
 
 class ComplexBatchNorm1d(nn.Module):
-    def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True, track_running_stats=True):
+    def __init__(
+        self,
+        num_features,
+        eps=1e-5,
+        momentum=0.1,
+        affine=True,
+        track_running_stats=True,
+    ):
         super(ComplexBatchNorm1d, self).__init__()
-        self.rbn = nn.BatchNorm1d(num_features, eps, momentum, affine, track_running_stats)
-        self.ibn = nn.BatchNorm1d(num_features, eps, momentum, affine, track_running_stats)
+        self.rbn = nn.BatchNorm1d(
+            num_features, eps, momentum, affine, track_running_stats
+        )
+        self.ibn = nn.BatchNorm1d(
+            num_features, eps, momentum, affine, track_running_stats
+        )
 
     def forward(self, input):
         return self.rbn(input.real) + 1j * self.ibn(input.imag)
 
 
 class ComplexBatchNorm2d(nn.Module):
-    def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True, track_running_stats=True):
+    def __init__(
+        self,
+        num_features,
+        eps=1e-5,
+        momentum=0.1,
+        affine=True,
+        track_running_stats=True,
+    ):
         super(ComplexBatchNorm2d, self).__init__()
-        self.rbn = nn.BatchNorm2d(num_features, eps, momentum, affine, track_running_stats)
-        self.ibn = nn.BatchNorm2d(num_features, eps, momentum, affine, track_running_stats)
+        self.rbn = nn.BatchNorm2d(
+            num_features, eps, momentum, affine, track_running_stats
+        )
+        self.ibn = nn.BatchNorm2d(
+            num_features, eps, momentum, affine, track_running_stats
+        )
 
     def forward(self, input):
         return self.rbn(input.real) + 1j * self.ibn(input.imag)
 
 
 class ComplexBatchNorm3d(nn.Module):
-    def __init__(self, num_features, eps=1e-5, momentum=0.1, affine=True, track_running_stats=True):
+    def __init__(
+        self,
+        num_features,
+        eps=1e-5,
+        momentum=0.1,
+        affine=True,
+        track_running_stats=True,
+    ):
         super(ComplexBatchNorm3d, self).__init__()
-        self.rbn = nn.BatchNorm3d(num_features, eps, momentum, affine, track_running_stats)
-        self.ibn = nn.BatchNorm3d(num_features, eps, momentum, affine, track_running_stats)
+        self.rbn = nn.BatchNorm3d(
+            num_features, eps, momentum, affine, track_running_stats
+        )
+        self.ibn = nn.BatchNorm3d(
+            num_features, eps, momentum, affine, track_running_stats
+        )
 
     def forward(self, input):
         return self.rbn(input.real) + 1j * self.ibn(input.imag)

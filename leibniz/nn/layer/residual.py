@@ -14,8 +14,26 @@ class Basic(th.nn.Module):
 
         self.step = step
         self.relu = relu
-        self.conv1 = conv(dim, dim, kernel_size=3, stride=1, padding=1, groups=1, bias=False, dilation=1)
-        self.conv2 = conv(dim, dim, kernel_size=3, stride=1, padding=1, groups=1, bias=False, dilation=1)
+        self.conv1 = conv(
+            dim,
+            dim,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            groups=1,
+            bias=False,
+            dilation=1,
+        )
+        self.conv2 = conv(
+            dim,
+            dim,
+            kernel_size=3,
+            stride=1,
+            padding=1,
+            groups=1,
+            bias=False,
+            dilation=1,
+        )
 
     def forward(self, x):
 

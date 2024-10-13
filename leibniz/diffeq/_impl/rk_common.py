@@ -2,10 +2,12 @@
 import collections
 from .misc import _scaled_dot_product, _convert_to_tensor
 
-_ButcherTableau = collections.namedtuple('_ButcherTableau', 'alpha beta c_sol c_error')
+_ButcherTableau = collections.namedtuple("_ButcherTableau", "alpha beta c_sol c_error")
 
 
-class _RungeKuttaState(collections.namedtuple('_RungeKuttaState', 'y1, f1, t0, t1, dt, interp_coeff')):
+class _RungeKuttaState(
+    collections.namedtuple("_RungeKuttaState", "y1, f1, t0, t1, dt, interp_coeff")
+):
     """Saved state of the Runge Kutta solver.
 
     Attributes:
@@ -53,7 +55,9 @@ def _runge_kutta_step(func, y0, f0, t0, dt, tableau):
 
     if not (tableau.c_sol[-1] == 0 and tableau.c_sol[:-1] == tableau.beta[-1]):
         # This property (true for Dormand-Prince) lets us save a few FLOPs.
-        yi = tuple(y0_ + _scaled_dot_product(dt, tableau.c_sol, k_) for y0_, k_ in zip(y0, k))
+        yi = tuple(
+            y0_ + _scaled_dot_product(dt, tableau.c_sol, k_) for y0_, k_ in zip(y0, k)
+        )
 
     y1 = yi
     f1 = tuple(k_[-1] for k_ in k)
@@ -62,17 +66,31 @@ def _runge_kutta_step(func, y0, f0, t0, dt, tableau):
 
 
 def rk4_step_func(func, t, dt, y, k1=None):
-    if k1 is None: k1 = func(t, y)
+    if k1 is None:
+        k1 = func(t, y)
     k2 = func(t + dt / 2, tuple(y_ + dt * k1_ / 2 for y_, k1_ in zip(y, k1)))
     k3 = func(t + dt / 2, tuple(y_ + dt * k2_ / 2 for y_, k2_ in zip(y, k2)))
     k4 = func(t + dt, tuple(y_ + dt * k3_ for y_, k3_ in zip(y, k3)))
-    return tuple((k1_ + 2 * k2_ + 2 * k3_ + k4_) * (dt / 6) for k1_, k2_, k3_, k4_ in zip(k1, k2, k3, k4))
+    return tuple(
+        (k1_ + 2 * k2_ + 2 * k3_ + k4_) * (dt / 6)
+        for k1_, k2_, k3_, k4_ in zip(k1, k2, k3, k4)
+    )
 
 
 def rk4_alt_step_func(func, t, dt, y, k1=None):
     """Smaller error with slightly more compute."""
-    if k1 is None: k1 = func(t, y)
+    if k1 is None:
+        k1 = func(t, y)
     k2 = func(t + dt / 3, tuple(y_ + dt * k1_ / 3 for y_, k1_ in zip(y, k1)))
-    k3 = func(t + dt * 2 / 3, tuple(y_ + dt * (k1_ / -3 + k2_) for y_, k1_, k2_ in zip(y, k1, k2)))
-    k4 = func(t + dt, tuple(y_ + dt * (k1_ - k2_ + k3_) for y_, k1_, k2_, k3_ in zip(y, k1, k2, k3)))
-    return tuple((k1_ + 3 * k2_ + 3 * k3_ + k4_) * (dt / 8) for k1_, k2_, k3_, k4_ in zip(k1, k2, k3, k4))
+    k3 = func(
+        t + dt * 2 / 3,
+        tuple(y_ + dt * (k1_ / -3 + k2_) for y_, k1_, k2_ in zip(y, k1, k2)),
+    )
+    k4 = func(
+        t + dt,
+        tuple(y_ + dt * (k1_ - k2_ + k3_) for y_, k1_, k2_, k3_ in zip(y, k1, k2, k3)),
+    )
+    return tuple(
+        (k1_ + 3 * k2_ + 3 * k3_ + k4_) * (dt / 8)
+        for k1_, k2_, k3_, k4_ in zip(k1, k2, k3, k4)
+    )

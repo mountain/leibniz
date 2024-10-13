@@ -14,15 +14,23 @@ from leibniz.core3d.gridsys.regular3 import RegularGrid
 class TestOpsPhiThetaR(unittest.TestCase):
 
     def setUp(self):
-        lbnz.bind(RegularGrid(
-            basis='lng,lat,alt',
-            L=51, W=51, H=51,
-            east=119.0, west=114.0,
-            north=42.3, south=37.3,
-            upper=16000.0, lower=0.0
-        ), r0=6371000)
-        lbnz.use('theta,phi,r')
-        lbnz.use('thetaphir')
+        lbnz.bind(
+            RegularGrid(
+                basis="lng,lat,alt",
+                L=51,
+                W=51,
+                H=51,
+                east=119.0,
+                west=114.0,
+                north=42.3,
+                south=37.3,
+                upper=16000.0,
+                lower=0.0,
+            ),
+            r0=6371000,
+        )
+        lbnz.use("theta,phi,r")
+        lbnz.use("thetaphir")
 
     def tearDown(self):
         lbnz.clear()
@@ -37,7 +45,12 @@ class TestOpsPhiThetaR(unittest.TestCase):
             return 10 ** int(np.log10(np.abs(var) + 1))
 
     def assertAlmostEqualWithMagnitude(self, excepted, test, magnitude=6):
-        if isinstance(excepted, Tensor) and th.abs(excepted).max().cpu().numpy() == 0.0 or isinstance(excepted, float) and excepted == 0.0:
+        if (
+            isinstance(excepted, Tensor)
+            and th.abs(excepted).max().cpu().numpy() == 0.0
+            or isinstance(excepted, float)
+            and excepted == 0.0
+        ):
             return self.assertAlmostEqual(0.0, test.max().cpu().numpy(), magnitude)
         else:
             mag = self.magnitude(excepted)
@@ -103,16 +116,22 @@ class TestOpsPhiThetaR(unittest.TestCase):
         phx, phy, phz = lbnz.thetaphir.phi
         thx, thy, thz = lbnz.thetaphir.theta
         rx, ry, rz = lbnz.thetaphir.r
-        g = lbnz.div(lbnz.curl((rx * rx + phx * thx, ry * ry + phy * thy, rz * rz + phz * thz)))
+        g = lbnz.div(
+            lbnz.curl((rx * rx + phx * thx, ry * ry + phy * thy, rz * rz + phz * thz))
+        )
         self.assertAlmostEqualWithMagnitude(0, g, 6)
 
     def test_div1(self):
         # F = (-theta, phi * theta, r);
         # expect that div_F = theta * tan(phi) / r + phi / (r * cos(phi)) + 3
 
-        fld = - lbnz.theta, lbnz.phi * lbnz.theta, lbnz.r
+        fld = -lbnz.theta, lbnz.phi * lbnz.theta, lbnz.r
 
-        expected = lbnz.theta * th.tan(lbnz.phi) / lbnz.r + lbnz.phi / (lbnz.r * th.cos(lbnz.phi)) + 3
+        expected = (
+            lbnz.theta * th.tan(lbnz.phi) / lbnz.r
+            + lbnz.phi / (lbnz.r * th.cos(lbnz.phi))
+            + 3
+        )
 
         test = lbnz.div(fld)
 
@@ -129,12 +148,16 @@ class TestOpsPhiThetaR(unittest.TestCase):
 
         Fx = -(lbnz.theta - theta0)
         Fy = (lbnz.phi - phi0) * (lbnz.theta - theta0)
-        Fz = (lbnz.r - r0)
+        Fz = lbnz.r - r0
 
         test = lbnz.div((Fx, Fy, Fz))
 
-        expected = (lbnz.theta - theta0) * th.tan(lbnz.phi) / lbnz.r +\
-                   (lbnz.phi - phi0) / (lbnz.r * th.cos(lbnz.phi)) + 3 - 2 * r0 / lbnz.r
+        expected = (
+            (lbnz.theta - theta0) * th.tan(lbnz.phi) / lbnz.r
+            + (lbnz.phi - phi0) / (lbnz.r * th.cos(lbnz.phi))
+            + 3
+            - 2 * r0 / lbnz.r
+        )
 
         self.assertAlmostEqualWithMagnitude(expected, test, 3)
 
@@ -142,11 +165,13 @@ class TestOpsPhiThetaR(unittest.TestCase):
         # F = (-theta, phi * theta, r);
         # expect that curl_F = (-phi*theta/r, -theta/r, (theta-phi*theta*tan(phi)+1/cos(phi))/r)
 
-        fld = - lbnz.theta, lbnz.phi * lbnz.theta, lbnz.r
+        fld = -lbnz.theta, lbnz.phi * lbnz.theta, lbnz.r
 
         expected_ph = -lbnz.phi * lbnz.theta / lbnz.r
         expected_th = -lbnz.theta / lbnz.r
-        expected_r = (lbnz.theta - lbnz.phi * lbnz.theta * th.tan(lbnz.phi) + 1 / th.cos(lbnz.phi)) / lbnz.r
+        expected_r = (
+            lbnz.theta - lbnz.phi * lbnz.theta * th.tan(lbnz.phi) + 1 / th.cos(lbnz.phi)
+        ) / lbnz.r
 
         test_ph, test_th, test_r = lbnz.curl(fld)
 

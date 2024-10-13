@@ -10,7 +10,15 @@ logger.setLevel(logging.INFO)
 
 
 class HypTube(nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, encoder=Linear, decoder=Linear, **kwargs):
+    def __init__(
+        self,
+        in_channels,
+        hidden_channels,
+        out_channels,
+        encoder=Linear,
+        decoder=Linear,
+        **kwargs
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -24,7 +32,7 @@ class HypTube(nn.Module):
         hc = self.hidden_channels
 
         flow = self.enc(input)
-        flow, uparam, vparam = flow[:, 2*hc:], flow[:, 0:hc], flow[:, hc:2*hc]
+        flow, uparam, vparam = flow[:, 2 * hc :], flow[:, 0:hc], flow[:, hc : 2 * hc]
         flow = flow.view(-1, hc, 2, 2, w, h)
 
         output = th.zeros(b, hc, w, h, device=input.device)
@@ -37,7 +45,16 @@ class HypTube(nn.Module):
 
 
 class StepwiseHypTube(nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, steps, encoder, decoder, **kwargs):
+    def __init__(
+        self,
+        in_channels,
+        hidden_channels,
+        out_channels,
+        steps,
+        encoder,
+        decoder,
+        **kwargs
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -52,7 +69,7 @@ class StepwiseHypTube(nn.Module):
         hc = self.hidden_channels
 
         flow = self.enc(input)
-        flow, uparam, vparam = flow[:, 2*hc:], flow[:, 0:hc], flow[:, hc:2*hc]
+        flow, uparam, vparam = flow[:, 2 * hc :], flow[:, 0:hc], flow[:, hc : 2 * hc]
         flow = flow.view(-1, hc, self.steps, 2, 2, w, h)
 
         result = []
@@ -68,7 +85,16 @@ class StepwiseHypTube(nn.Module):
 
 
 class LeveledHypTube(nn.Module):
-    def __init__(self, in_channels, hidden_channels, out_channels, levels, encoder, decoder, **kwargs):
+    def __init__(
+        self,
+        in_channels,
+        hidden_channels,
+        out_channels,
+        levels,
+        encoder,
+        decoder,
+        **kwargs
+    ):
         super().__init__()
         self.in_channels = in_channels
         self.hidden_channels = hidden_channels
@@ -89,7 +115,11 @@ class LeveledHypTube(nn.Module):
         output = th.zeros(b, hc, w, h, device=input.device)
         for jx in range(self.levels):
             flow = self.leveled[jx](flow)
-            params, uparam, vparam = flow[:, 2 * hc:], flow[:, 0:hc], flow[:, hc:2 * hc]
+            params, uparam, vparam = (
+                flow[:, 2 * hc :],
+                flow[:, 0:hc],
+                flow[:, hc : 2 * hc],
+            )
             params = params.view(-1, hc, 2, 2, w, h)
             for ix in range(2):
                 aparam = params[:, :, ix, 0]

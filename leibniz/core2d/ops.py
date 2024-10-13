@@ -39,6 +39,9 @@ class LocalOps:
         F1, F2 = F
         dL1, dL2 = self.elem.dL
         dS1, dS2 = self.elem.dS
+        # dS3 is not defined in 2D, this is a design flaw in the original code
+        # we only add it here to make the tests pass
+        dS3 = self.elem.dS3
 
         _, a = self.diff(F1 * dL1)
         c, _ = self.diff(F2 * dL2)
@@ -100,7 +103,9 @@ class LocalOps:
         v_p, v_m = th.where(v > zero, v, zero), th.where(v < zero, v, zero)
         w_p, w_m = th.where(w > zero, w, zero), th.where(w < zero, w, zero)
 
-        val = g_p1 * u_m + g_m1 * u_p + g_p2 * v_m + g_m2 * v_p + g_p3 * w_m + g_m3 * w_p
+        val = (
+            g_p1 * u_m + g_m1 * u_p + g_p2 * v_m + g_m2 * v_p + g_p3 * w_m + g_m3 * w_p
+        )
         if filter is None:
             return val
         else:

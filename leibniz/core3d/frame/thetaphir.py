@@ -12,14 +12,14 @@ class ThetaPhiRFrame:
     def __init__(self, grid):
         self.default_device = -1
         self.grid = grid
-        lbnz.use('theta,phi,r')
+        lbnz.use("theta,phi,r")
 
-        self.thx = - th.sin(lbnz.theta)
+        self.thx = -th.sin(lbnz.theta)
         self.thy = th.cos(lbnz.theta)
-        self.thz = - lbnz.zero
+        self.thz = -lbnz.zero
 
-        self.phx = - th.sin(lbnz.phi) * th.cos(lbnz.theta)
-        self.phy = - th.sin(lbnz.phi) * th.sin(lbnz.theta)
+        self.phx = -th.sin(lbnz.phi) * th.cos(lbnz.theta)
+        self.phy = -th.sin(lbnz.phi) * th.sin(lbnz.theta)
         self.phz = th.cos(lbnz.phi)
 
         self.rx = th.cos(lbnz.phi) * th.cos(lbnz.theta)
@@ -54,5 +54,5 @@ class ThetaPhiRFrame:
         return self.rx, self.ry, self.rz
 
 
-_name_ = 'thetaphir'
+_name_ = "thetaphir"
 _clazz_ = ThetaPhiRFrame

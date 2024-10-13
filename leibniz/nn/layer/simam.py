@@ -1,11 +1,10 @@
-import torch as th
 import torch.nn as nn
 
-'''
+"""
 Original by ZjjConan
 from https://github.com/ZjjConan/SimAM/blob/master/networks/attentions/simam_module.py
 modified by Mingli Yuan (Mountain)
-'''
+"""
 
 
 class SimAM(nn.Module):
@@ -32,6 +31,9 @@ class SimAM(nn.Module):
 
         mu = x.mean(dim=dims, keepdim=True)
         square = (x - mu) * (x - mu)
-        y = square / (4 * (square.sum(dim=dims, keepdim=True) / n + self.e_lambda)) + 0.5
+        y = (
+            square / (4 * (square.sum(dim=dims, keepdim=True) / n + self.e_lambda))
+            + 0.5
+        )
 
         return x * self.activaton(y)

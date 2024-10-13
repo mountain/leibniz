@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-_name_ = 'x,y'
-_params_ = ('x', 'y')
+_name_ = "x,y"
+_params_ = ("x", "y")
 
 
 def transform(x, y, **kwargs):
@@ -19,4 +19,3 @@ def inverse(x, y, **kwargs):
 
 def dinverse(x, y, dx, dy, **kwargs):
     return dx, dy
-

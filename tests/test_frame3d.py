@@ -12,16 +12,23 @@ from leibniz.core3d.gridsys.regular3 import RegularGrid
 class TestFrame(unittest.TestCase):
 
     def setUp(self):
-        lbnz.bind(RegularGrid(
-            basis='lng,lat,alt',
-            W=51, L=51, H=51,
-            east=119.0, west=114.0,
-            north=42.3, south=37.3,
-            upper=16000.0, lower=0.0
-        ))
-        lbnz.use('thetaphir')
-        lbnz.use('xyz')
-        lbnz.use('x,y,z')
+        lbnz.bind(
+            RegularGrid(
+                basis="lng,lat,alt",
+                W=51,
+                L=51,
+                H=51,
+                east=119.0,
+                west=114.0,
+                north=42.3,
+                south=37.3,
+                upper=16000.0,
+                lower=0.0,
+            )
+        )
+        lbnz.use("thetaphir")
+        lbnz.use("xyz")
+        lbnz.use("x,y,z")
 
     def tearDown(self):
         lbnz.clear()
@@ -54,7 +61,11 @@ class TestFrame(unittest.TestCase):
         self.assertAlmostEqual(0, np.min(thx * rx + thy * ry + thz * rz))
 
     def test_basis_righthand(self):
-        d = box(lbnz.thetaphir.theta, lbnz.thetaphir.phi, lbnz.thetaphir.r).cpu().numpy()
+        d = (
+            box(lbnz.thetaphir.theta, lbnz.thetaphir.phi, lbnz.thetaphir.r)
+            .cpu()
+            .numpy()
+        )
         self.assertAlmostEqual(1, np.mean(d))
         self.assertAlmostEqual(1, np.min(d))
         self.assertAlmostEqual(1, np.max(d))
@@ -81,6 +92,3 @@ class TestFrame(unittest.TestCase):
         rx, ry, rz = lbnz.normalize((x - lbnz.x, y - lbnz.y, z - lbnz.z))
         a = lbnz.dot((rx, ry, rz), lbnz.thetaphir.r)
         self.assertAlmostEqual(1, np.mean(a.cpu().numpy()))
-
-
-

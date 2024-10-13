@@ -13,16 +13,23 @@ from leibniz.core3d.gridsys.regular3 import RegularGrid
 class TestOpsXYZ(unittest.TestCase):
 
     def setUp(self):
-        lbnz.bind(RegularGrid(
-            basis='x,y,z',
-            L=51, W=51, H=51,
-            east=6.0, west=1.0,
-            north=6.0, south=1.0,
-            upper=6.0, lower=1.0
-        ))
-        lbnz.use('xyz')
-        lbnz.use('theta,phi,r')
-        lbnz.use('thetaphir')
+        lbnz.bind(
+            RegularGrid(
+                basis="x,y,z",
+                L=51,
+                W=51,
+                H=51,
+                east=6.0,
+                west=1.0,
+                north=6.0,
+                south=1.0,
+                upper=6.0,
+                lower=1.0,
+            )
+        )
+        lbnz.use("xyz")
+        lbnz.use("theta,phi,r")
+        lbnz.use("thetaphir")
 
     def tearDown(self):
         lbnz.clear()
@@ -37,8 +44,9 @@ class TestOpsXYZ(unittest.TestCase):
             return 10 ** int(np.log10(np.abs(var)) + 1)
 
     def assertAlmostEqualWithMagnitude(self, excepted, test, magnitude=6):
-        if (isinstance(excepted, Tensor) and th.abs(excepted).max().cpu().numpy() == 0.0) or \
-                (isinstance(excepted, float) and excepted == 0.0):
+        if (
+            isinstance(excepted, Tensor) and th.abs(excepted).max().cpu().numpy() == 0.0
+        ) or (isinstance(excepted, float) and excepted == 0.0):
             return self.assertAlmostEqual(0.0, test.max().cpu().numpy(), magnitude)
         else:
             mag = self.magnitude(excepted)
@@ -50,7 +58,10 @@ class TestOpsXYZ(unittest.TestCase):
             test = test[:, :, 1:-1, 1:-1, 1:-1]
             return self.assertAlmostEqualWithMagnitude(excepted, test, magnitude)
         else:
-            excepted, test = excepted[:, :, 1:-1, 1:-1, 1:-1], test[:, :, 1:-1, 1:-1, 1:-1]
+            excepted, test = (
+                excepted[:, :, 1:-1, 1:-1, 1:-1],
+                test[:, :, 1:-1, 1:-1, 1:-1],
+            )
             return self.assertAlmostEqualWithMagnitude(excepted, test, magnitude)
 
     def test_grad0(self):
@@ -91,8 +102,9 @@ class TestOpsXYZ(unittest.TestCase):
         # expect that div_F = theta * (-z * y / (r ** 2 * sqrt(r ** 2 - z ** 2))) + phi * x / (x ** 2 + y ** 2)
 
         fld = lbnz.zero, lbnz.phi * lbnz.theta, lbnz.zero
-        expected = lbnz.theta * (-lbnz.z * lbnz.y / (lbnz.r ** 2 * th.sqrt(lbnz.r ** 2 - lbnz.z ** 2))) + lbnz.phi * lbnz.x / \
-            (lbnz.x ** 2 + lbnz.y ** 2)
+        expected = lbnz.theta * (
+            -lbnz.z * lbnz.y / (lbnz.r**2 * th.sqrt(lbnz.r**2 - lbnz.z**2))
+        ) + lbnz.phi * lbnz.x / (lbnz.x**2 + lbnz.y**2)
         test = lbnz.div(fld)
 
         self.assertAlmostEqualWithMagExceptBoundary(expected, test, 2)
@@ -101,7 +113,7 @@ class TestOpsXYZ(unittest.TestCase):
         # F = (-y, x * y, z);
         # expect that div_F = x + 1
 
-        fld = - lbnz.y, lbnz.x * lbnz.y, lbnz.z
+        fld = -lbnz.y, lbnz.x * lbnz.y, lbnz.z
         expected = lbnz.x + 1
         test = lbnz.div(fld)
 
@@ -150,9 +162,11 @@ class TestOpsXYZ(unittest.TestCase):
         # F = y * y, 2 * x * y, 3 * z * z
         fld = lbnz.y * lbnz.y, 2 * lbnz.x * lbnz.y, 3 * lbnz.z * lbnz.z
 
-        noise = th.randn_like(fld[0]) * th.std(fld[0]) * 1e-6, \
-            th.randn_like(fld[1]) * th.std(fld[1]) * 1e-6, \
-            th.randn_like(fld[2]) * th.std(fld[2]) * 1e-6
+        noise = (
+            th.randn_like(fld[0]) * th.std(fld[0]) * 1e-6,
+            th.randn_like(fld[1]) * th.std(fld[1]) * 1e-6,
+            th.randn_like(fld[2]) * th.std(fld[2]) * 1e-6,
+        )
         fld_ = fld[0] + noise[0], fld[1] + noise[1], fld[2] + noise[2]
         self.assertAlmostEqualWithMagExceptBoundary(fld[0], fld_[0], 5)
         self.assertAlmostEqualWithMagExceptBoundary(fld[1], fld_[1], 5)
@@ -172,7 +186,7 @@ class TestOpsXYZ(unittest.TestCase):
         # F = (y, -x, 0)
         # expect that curl_F = (0, 0, -2)
 
-        fld = lbnz.y, - lbnz.x, lbnz.zero
+        fld = lbnz.y, -lbnz.x, lbnz.zero
         expt_x, expt_y, expt_z = lbnz.zero, lbnz.zero, -2 * lbnz.one
         test_x, test_y, test_z = lbnz.curl(fld)
 
@@ -184,7 +198,7 @@ class TestOpsXYZ(unittest.TestCase):
         # F = (0, - x**2, 0)
         # expect that curl_F = (0, 0, -2 * x)
 
-        fld = lbnz.zero, - lbnz.x * lbnz.x, lbnz.zero
+        fld = lbnz.zero, -lbnz.x * lbnz.x, lbnz.zero
         expt_x, expt_y, expt_z = lbnz.zero, lbnz.zero, -2 * lbnz.x
         test_x, test_y, test_z = lbnz.curl(fld)
 
@@ -234,5 +248,7 @@ class TestOpsXYZ(unittest.TestCase):
         phx, phy, phz = lbnz.thetaphir.phi
         thx, thy, thz = lbnz.thetaphir.theta
         rx, ry, rz = lbnz.thetaphir.r
-        g = lbnz.div(lbnz.curl((rx * rx + phx * thx, ry * ry + phy * thy, rz * rz + phz * thz)))
+        g = lbnz.div(
+            lbnz.curl((rx * rx + phx * thx, ry * ry + phy * thy, rz * rz + phz * thz))
+        )
         self.assertAlmostEqualWithMagExceptBoundary(lbnz.zero, g, 6)

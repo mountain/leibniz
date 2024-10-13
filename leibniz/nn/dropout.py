@@ -9,8 +9,11 @@ class ComplexDropout1d(nn.Module):
         self.inplace = inplace
 
     def forward(self, input):
-        return F.dropout(input.real, p=self.p, training=self.training, inplace=self.inplace) +\
-               1j * F.dropout(input.imag, p=self.p, training=self.training, inplace=self.inplace)
+        return F.dropout(
+            input.real, p=self.p, training=self.training, inplace=self.inplace
+        ) + 1j * F.dropout(
+            input.imag, p=self.p, training=self.training, inplace=self.inplace
+        )
 
 
 class ComplexDropout2d(nn.Module):
@@ -20,8 +23,11 @@ class ComplexDropout2d(nn.Module):
         self.inplace = inplace
 
     def forward(self, input):
-        return F.dropout2d(input.real, p=self.p, training=self.training, inplace=self.inplace) +\
-               1j * F.dropout2d(input.imag, p=self.p, training=self.training, inplace=self.inplace)
+        return F.dropout2d(
+            input.real, p=self.p, training=self.training, inplace=self.inplace
+        ) + 1j * F.dropout2d(
+            input.imag, p=self.p, training=self.training, inplace=self.inplace
+        )
 
 
 class ComplexDropout3d(nn.Module):
@@ -31,5 +37,8 @@ class ComplexDropout3d(nn.Module):
         self.inplace = inplace
 
     def forward(self, input):
-        return F.dropout3d(input.real, p=self.p, training=self.training, inplace=self.inplace) +\
-               1j * F.dropout3d(input.imag, p=self.p, training=self.training, inplace=self.inplace)
+        return F.dropout3d(
+            input.real, p=self.p, training=self.training, inplace=self.inplace
+        ) + 1j * F.dropout3d(
+            input.imag, p=self.p, training=self.training, inplace=self.inplace
+        )

@@ -26,7 +26,7 @@ class RegularGrid:
 
     def get_device(self):
         if self.default_device == -1:
-            return 'cpu'
+            return "cpu"
         return self.default_device
 
     def set_device(self, ix):
@@ -57,21 +57,27 @@ class RegularGrid:
         right[:, -1, :] = 1
         left[:, 0, :] = 1
 
-        return th.cat([
-            foreward, backward, left, right
-        ], dim=1).view(1, 4, self.L, self.W)
+        return th.cat([foreward, backward, left, right], dim=1).view(
+            1, 4, self.L, self.W
+        )
 
     def data(self) -> Tensor:
-        return cast(np.meshgrid(
-            np.linspace(self.west, self.east, num=self.L),
-            np.linspace(self.south, self.north, num=self.W),
-        ), device=self.default_device).view(1, 2, self.L, self.W)
+        return cast(
+            np.meshgrid(
+                np.linspace(self.west, self.east, num=self.L),
+                np.linspace(self.south, self.north, num=self.W),
+            ),
+            device=self.default_device,
+        ).view(1, 2, self.L, self.W)
 
     def delta(self) -> Tensor:
-        return th.cat([
-            (self.east - self.west) / (self.L - 1) * self.one,
-            (self.north - self.south) / (self.W - 1) * self.one,
-        ], dim=1).view(1, 2, self.L, self.W)
+        return th.cat(
+            [
+                (self.east - self.west) / (self.L - 1) * self.one,
+                (self.north - self.south) / (self.W - 1) * self.one,
+            ],
+            dim=1,
+        ).view(1, 2, self.L, self.W)
 
     def random(self) -> Tensor:
         d = lbnz.get_device()

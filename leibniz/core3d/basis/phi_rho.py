@@ -3,8 +3,8 @@
 import torch as th
 
 
-_name_ = 'phi,rho'
-_params_ = ('phi', 'rho')
+_name_ = "phi,rho"
+_params_ = ("phi", "rho")
 
 
 def transform(phi, rho, **kwargs):
@@ -14,8 +14,8 @@ def transform(phi, rho, **kwargs):
 
 
 def dtransform(phi, rho, dphi, drho, **kwargs):
-    dx = - rho * th.sin(phi) * dphi + th.cos(phi) * drho
-    dy = - rho * th.cos(phi) * dphi + th.sin(phi) * drho
+    dx = -rho * th.sin(phi) * dphi + th.cos(phi) * drho
+    dy = -rho * th.cos(phi) * dphi + th.sin(phi) * drho
 
     return dx, dy
 
@@ -34,4 +34,3 @@ def dinverse(x, y, dx, dy, **kwargs):
     dphi = (x * dy - y * dx) / rhosq
 
     return dphi, drho
-

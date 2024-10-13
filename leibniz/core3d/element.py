@@ -12,16 +12,16 @@ class Elements:
     def __init__(self, **kwargs):
         self.default_device = -1
 
-        if lbnz._grid_.basis == 'theta,phi,r':
+        if lbnz._grid_.basis == "theta,phi,r":
             self.dL1 = lbnz.r * th.cos(lbnz.phi) * lbnz.dtheta
             self.dL2 = lbnz.r * lbnz.dphi
             self.dL3 = lbnz.dr
-        if lbnz._grid_.basis == 'x,y,z':
+        if lbnz._grid_.basis == "x,y,z":
             self.dL1 = lbnz.dx
             self.dL2 = lbnz.dy
             self.dL3 = lbnz.dz
-        if lbnz._grid_.basis == 'lng,lat,alt':
-            lbnz.use('theta,phi,r', **kwargs)
+        if lbnz._grid_.basis == "lng,lat,alt":
+            lbnz.use("theta,phi,r", **kwargs)
             self.dL1 = lbnz.r * th.cos(lbnz.phi) * lbnz.dtheta
             self.dL2 = lbnz.r * lbnz.dphi
             self.dL3 = lbnz.dr

@@ -11,7 +11,7 @@ class XYZFrame:
     def __init__(self, grid):
         self.grid = grid
         self.default_device = -1
-        iza.use('x,y,z')
+        iza.use("x,y,z")
 
     def get_device(self):
         return self.default_device
@@ -33,5 +33,5 @@ class XYZFrame:
         return self.grid.zero, self.grid.zero, self.grid.one
 
 
-_name_ = 'xyz'
+_name_ = "xyz"
 _clazz_ = XYZFrame

@@ -10,7 +10,7 @@ class SELayer(nn.Module):
             nn.Linear(channel, channel // reduction + 1, bias=False),
             nn.ReLU(inplace=True),
             nn.Linear(channel // reduction + 1, channel, bias=False),
-            nn.Sigmoid()
+            nn.Sigmoid(),
         )
 
     def forward(self, x):
@@ -88,4 +88,3 @@ class SEBottleneck(nn.Module):
         y = x + y
 
         return y
-

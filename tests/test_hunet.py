@@ -18,9 +18,23 @@ class TestUnet(unittest.TestCase):
         resunet(1, 1, spatial=(16, 16))
         resunet(1, 1, spatial=(16, 32))
         resunet(1, 1, spatial=(32, 16))
-        net = resunet(1, 1, spatial=(32, 16), scales=[[0, -1], [0, -1], [0, -1], [0, -1]])
+        net = resunet(
+            1, 1, spatial=(32, 16), scales=[[0, -1], [0, -1], [0, -1], [0, -1]]
+        )
         net(th.rand(1, 1, 32, 16))
-        net = resunet(1, 1, spatial=(32, 16), scales=[[0, -1], [0, -1], [0, -1], [0, -1]], normalizor='instance')
+        net = resunet(
+            1,
+            1,
+            spatial=(32, 16),
+            scales=[[0, -1], [0, -1], [0, -1], [0, -1]],
+            normalizor="instance",
+        )
         net(th.rand(1, 1, 32, 16))
-        net = resunet(1, 1, spatial=(32, 16), scales=[[0, -1], [0, -1], [0, -1], [0, -1]], normalizor='layer')
+        net = resunet(
+            1,
+            1,
+            spatial=(32, 16),
+            scales=[[0, -1], [0, -1], [0, -1], [0, -1]],
+            normalizor="layer",
+        )
         net(th.rand(1, 1, 32, 16))

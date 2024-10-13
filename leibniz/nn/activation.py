@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import torch as th
-import torch.nn as nn
-from torch import nn as nn
+from torch import nn
 
 
 class Swish(th.nn.Module):
@@ -31,7 +30,9 @@ class CappingRelu(th.nn.Module):
 
     def forward(self, x):
         if x.dtype == th.cfloat or x.dtype == th.cdouble:
-            return th.clamp(self.leaky(x.real), max=10) + 1j * th.clamp(self.leaky(x.imag), max=10)
+            return th.clamp(self.leaky(x.real), max=10) + 1j * th.clamp(
+                self.leaky(x.imag), max=10
+            )
         return th.clamp(self.leaky(x), max=10)
 
 
@@ -67,4 +68,8 @@ class ComplexLinear(nn.Module):
         self.ifc = nn.Linear(in_channels, out_channels, bias)
 
     def forward(self, input):
-        return self.rfc(input.real) - self.ifc(input.imag) + 1j * (self.rfc(input.imag) + self.ifc(input.real))
+        return (
+            self.rfc(input.real)
+            - self.ifc(input.imag)
+            + 1j * (self.rfc(input.imag) + self.ifc(input.real))
+        )

@@ -7,6 +7,7 @@ import torch.nn as nn
 # https://arxiv.org/abs/2007.04417v1
 # Modified by Mingli Yuan (Mountain)
 
+
 class Flatten(nn.Module):
     def forward(self, x):
         return x.view(x.size(0), -1)
@@ -24,7 +25,7 @@ class ChannelLayer(nn.Module):
             Flatten(),
             nn.Linear(input_channels, input_channels // reduction_ratio + 1),
             nn.ReLU(),
-            nn.Linear(input_channels // reduction_ratio + 1, input_channels)
+            nn.Linear(input_channels // reduction_ratio + 1, input_channels),
         )
 
     def forward(self, x):
@@ -52,7 +53,9 @@ class ChannelLayer(nn.Module):
             # Take the input and apply average and max pooling
             avg_values = self.avg_pool(x)
             max_values = self.max_pool(x)
-            out = (self.mlp(avg_values) + self.mlp(max_values)).view(sz[0], sz[1], 1, 1, 1)
+            out = (self.mlp(avg_values) + self.mlp(max_values)).view(
+                sz[0], sz[1], 1, 1, 1
+            )
 
         scale = x * th.sigmoid(out)
         return scale
@@ -61,7 +64,7 @@ class ChannelLayer(nn.Module):
 class SpatialLayer(nn.Module):
     def __init__(self, kernel_size=7, conv=None):
         super(SpatialLayer, self).__init__()
-        assert kernel_size in (3, 7), 'kernel size must be 3 or 7'
+        assert kernel_size in (3, 7), "kernel size must be 3 or 7"
         padding = 3 if kernel_size == 7 else 1
         self.spatial = conv(2, 1, kernel_size=kernel_size, padding=padding, bias=False)
 
