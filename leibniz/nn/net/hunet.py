@@ -201,7 +201,7 @@ class HUNet(nn.Module):
         extension = block.extension
         lrd = block.least_required_dim
 
-        spatial = np.array(spatial, dtype=np.int)
+        spatial = np.array(spatial, dtype=np.int32)
         dim = len(spatial)
         self.dim = dim
         Conv = self.get_conv_for_prepare()
@@ -273,13 +273,13 @@ class HUNet(nn.Module):
             self.upforms = nn.ModuleList()
             self.deconvs = nn.ModuleList()
 
-            self.spatial = [np.array(spatial, dtype=np.int)]
-            self.channel_sizes = [np.array(c0, dtype=np.int)]
+            self.spatial = [np.array(spatial, dtype=np.int32)]
+            self.channel_sizes = [np.array(c0, dtype=np.int32)]
             for ix in range(layers):
                 least_factor = ex
                 scale, factor = scales[ix], factors[ix]
-                self.spatial.append(np.array(self.spatial[ix] * scale, dtype=np.int))
-                self.channel_sizes.append(np.array(self.channel_sizes[ix] * factor // least_factor * least_factor, dtype=np.int))
+                self.spatial.append(np.array(self.spatial[ix] * scale, dtype=np.int32))
+                self.channel_sizes.append(np.array(self.channel_sizes[ix] * factor // least_factor * least_factor, dtype=np.int32))
 
                 ci, co = self.channel_sizes[ix].item(), self.channel_sizes[ix + 1].item()
                 szi, szo = self.spatial[ix + 1], self.spatial[ix]

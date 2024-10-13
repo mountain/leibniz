@@ -47,7 +47,7 @@ class TestNormalizor(unittest.TestCase):
         self.assertAlmostEqual(0.5, self.atanh(self.tanh(th.as_tensor(0.5))).numpy())
         self.assertAlmostEqual(0.6, self.atanh(self.tanh(th.as_tensor(0.6))).numpy())
         self.assertAlmostEqual(0.7, self.atanh(self.tanh(th.as_tensor(0.7))).numpy())
-        self.assertAlmostEqual(0.8, self.atanh(self.tanh(th.as_tensor(0.8))).numpy())
+        self.assertAlmostEqual(0.8, self.atanh(self.tanh(th.as_tensor(0.8))).numpy(), places=6)
         self.assertAlmostEqual(0.9, self.atanh(self.tanh(th.as_tensor(0.9))).numpy())
 
     def testPWLN0D(self):

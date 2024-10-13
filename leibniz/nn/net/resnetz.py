@@ -18,7 +18,7 @@ class ResNetZ(nn.Module):
                  conv_class=None, relu=None, normalizor=None):
         super().__init__()
 
-        spatial = np.array(spatial, dtype=np.int)
+        spatial = np.array(spatial, dtype=np.int32)
         dim = len(spatial)
         self.dim = dim
         self.ratio = np.power(2, ratio)
@@ -26,7 +26,7 @@ class ResNetZ(nn.Module):
         self.in_channels = int(in_channels)
         self.num_filters = int(in_channels * self.ratio)
         self.out_channels = int(out_channels)
-        self.spatial = [np.array(spatial, dtype=np.int)]
+        self.spatial = [np.array(spatial, dtype=np.int32)]
 
         logger.info('---------------------------------------')
         logger.info('dim: %f', self.dim)

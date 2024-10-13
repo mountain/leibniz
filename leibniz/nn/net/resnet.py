@@ -20,7 +20,7 @@ class ResNet(nn.Module):
 
         extension = block.extension
 
-        spatial = np.array(spatial, dtype=np.int)
+        spatial = np.array(spatial, dtype=np.int32)
         dim = len(spatial)
         self.dim = dim
         Conv = self.get_conv_for_prepare()
@@ -61,12 +61,12 @@ class ResNet(nn.Module):
         self.enconvs = nn.ModuleList()
         self.transforms = nn.ModuleList()
 
-        self.spatial = [np.array(spatial, dtype=np.int)]
-        self.channel_sizes = [np.array(c0, dtype=np.int)]
+        self.spatial = [np.array(spatial, dtype=np.int32)]
+        self.channel_sizes = [np.array(c0, dtype=np.int32)]
         for ix in range(layers):
             least_factor = ex
             factor = factors[ix]
-            self.channel_sizes.append(np.array(self.channel_sizes[ix] * factor // least_factor * least_factor, dtype=np.int))
+            self.channel_sizes.append(np.array(self.channel_sizes[ix] * factor // least_factor * least_factor, dtype=np.int32))
 
             ci, co = self.channel_sizes[ix].item(), self.channel_sizes[ix + 1].item()
             logger.info('%d - ci: %d, co: %d', ix, ci, co)
