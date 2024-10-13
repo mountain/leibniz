@@ -3,5 +3,3 @@ cached_property
 numpy
 torch
 torchpwl
-
-nose
